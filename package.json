@@ -1,0 +1,31 @@
+{
+  "name": "@fmtk/package-list",
+  "version": "1.0.0",
+  "description": "Returns information about the packages installed in a project",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "npm run lint && tsc",
+    "lint": "tslint -p tsconfig.json 'src/**/*.+(ts|tsx)'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/futurematik/package-list.git"
+  },
+  "author": "Gordon Leigh <gordon.leigh@futurematik.co.uk>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/futurematik/package-list/issues"
+  },
+  "homepage": "https://github.com/futurematik/package-list#readme",
+  "devDependencies": {
+    "@types/node": "^10.12.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.3"
+  },
+  "dependencies": {
+    "@yarnpkg/lockfile": "^1.1.0",
+    "npm-logical-tree": "^1.2.1",
+    "yarn-logical-tree": "^1.0.2"
+  }
+}

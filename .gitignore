@@ -1,0 +1,7 @@
+node_modules/
+lib/
+.local/
+coverage/
+*.log
+yarn-error.log
+test-report.xml
