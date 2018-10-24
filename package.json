@@ -1,11 +1,12 @@
 {
   "name": "@fmtk/package-list",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Returns information about the packages installed in a project",
   "main": "lib/index.js",
   "scripts": {
     "build": "npm run lint && tsc",
     "lint": "tslint -p tsconfig.json 'src/**/*.+(ts|tsx)'",
+    "prepare": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
