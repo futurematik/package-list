@@ -9,7 +9,6 @@
     "experimentalDecorators": true,
     "types": ["node"],
     "sourceMap": true,
-    "sourceRoot": "src",
     "outDir": "lib",
     "declaration": true
   },

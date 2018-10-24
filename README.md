@@ -37,17 +37,16 @@ This will output a structure like the following:
 
 ```json
 {
-  "super-package-list": {
-    "1.0.0": {
-      "name": "super-package-list",
-      "version": "1.0.0",
+  "strip-ansi": {
+    "3.0.1": {
+      "name": "strip-ansi",
+      "version": "3.0.1",
+      "resolved": "http://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz#6a385fb8853d952d5ff05d0e8aaf94278dc63dcf",
+      "requires": {
+        "ansi-regex": "^2.0.0"
+      },
       "dependencies": {
-        "@types/node": "10.12.0",
-        "tslint": "5.11.0",
-        "typescript": "3.1.3",
-        "@yarnpkg/lockfile": "1.1.0",
-        "npm-logical-tree": "1.2.1",
-        "yarn-logical-tree": "1.0.2"
+        "ansi-regex": "2.1.1"
       }
     }
   }
