@@ -5,6 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "npm run lint && tsc",
+    "bump": "npm version minor && npm publish",
+    "bumpfix": "npm version patch && npm publish",
     "lint": "tslint -p tsconfig.json 'src/**/*.+(ts|tsx)'",
     "postversion": "git push --follow-tags",
     "prepare": "npm run build",
