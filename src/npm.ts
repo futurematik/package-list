@@ -1,6 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { PackageInfo, DependencyList, PackageList } from './common';
+import {
+  PackageInfo,
+  DependencyList,
+  PackageList,
+  getRootDependencies,
+} from './common';
 import { packagesToPackageList } from './util';
 
 interface LockfileEntry {
@@ -28,9 +33,11 @@ export function getPackageListFromNPM(
   }
 
   const lock: LockfileEntry = JSON.parse(fs.readFileSync(lockPath, 'utf8'));
+  const rootDeps = getRootDependencies(rootDir);
 
   // make it easy to find the root package
   lock.version = '.';
+  lock.requires = rootDeps;
 
   return packagesToPackageList(rewriteLock('.', lock));
 }
@@ -56,8 +63,8 @@ function rewriteLock(
     : [];
   return [
     {
-      name,
       ...rest,
+      name,
       dependencies: rewriteDeps(rest.requires, fullPath),
     },
     ...children,

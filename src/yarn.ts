@@ -8,6 +8,7 @@ import {
   DependencyList,
   YarnLockfile,
   PackageList,
+  getRootDependencies,
 } from './common';
 import { packagesToPackageList, entries, entriesToObjReducer } from './util';
 
@@ -32,31 +33,21 @@ export function getPackageListFromYarn(
   rootDir?: string,
 ): PackageList | undefined {
   rootDir = path.resolve(rootDir || '.');
-  const pkgPath = path.join(rootDir, 'package.json');
 
-  if (!fs.existsSync(pkgPath)) {
-    return;
-  }
-
-  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
   const lock = getYarnLock(rootDir);
   if (!lock) {
     return;
   }
 
-  const allDeps: DependencyList = {
-    ...(pkg.dependencies || {}),
-    ...(pkg.devDependencies || {}),
-    ...(pkg.optionalDependencies || {}),
-  };
+  const rootDeps = getRootDependencies(rootDir);
 
   return packagesToPackageList([
     ...rewriteLock(lock),
     {
       name: '.',
       version: '.',
-      requires: allDeps,
-      dependencies: mapDependencies(allDeps, lock),
+      requires: rootDeps,
+      dependencies: mapDependencies(rootDeps, lock),
     },
   ]);
 }

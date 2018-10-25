@@ -1,3 +1,5 @@
+import * as path from 'path';
+import * as fs from 'fs';
 import { entries, entriesToObjReducer } from './util';
 
 /**
@@ -49,6 +51,21 @@ export interface YarnLockfileEntry {
   resolved?: string;
   integrity?: string;
   dependencies?: DependencyList;
+}
+
+/**
+ * Get the root dependencies from the package.json file.
+ */
+export function getRootDependencies(rootDir?: string): DependencyList {
+  rootDir = path.resolve(rootDir || '.');
+  const pkgPath = path.join(rootDir, 'package.json');
+  const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+
+  return {
+    ...(pkg.dependencies || {}),
+    ...(pkg.devDependencies || {}),
+    ...(pkg.optionalDependencies || {}),
+  };
 }
 
 /**
