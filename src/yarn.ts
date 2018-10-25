@@ -3,33 +3,46 @@ import * as fs from 'fs';
 
 const yarnlock = require('@yarnpkg/lockfile');
 
-import { PackageList, PackageInfo, DependencyList } from './common';
+import {
+  PackageInfo,
+  DependencyList,
+  YarnLockfile,
+  PackageList,
+} from './common';
+import { packagesToPackageList, entries, entriesToObjReducer } from './util';
 
-interface Lockfile {
-  [name: string]: LockfileEntry;
+/**
+ * Parse the yarn.lock file. Returns undefined if not found.
+ */
+export function getYarnLock(rootDir?: string): YarnLockfile | undefined {
+  rootDir = path.resolve(rootDir || '.');
+  const lockPath = path.join(rootDir, 'yarn.lock');
+
+  if (!fs.existsSync(lockPath)) {
+    return;
+  }
+
+  return yarnlock.parse(fs.readFileSync(lockPath, 'utf8')).object;
 }
 
-interface LockfileEntry {
-  version: string;
-  resolved?: string;
-  integrity?: string;
-  dependencies?: DependencyList;
-}
-
+/**
+ * Get a package list in common format from the yarn.lock file.
+ */
 export function getPackageListFromYarn(
   rootDir?: string,
 ): PackageList | undefined {
   rootDir = path.resolve(rootDir || '.');
   const pkgPath = path.join(rootDir, 'package.json');
-  const lockPath = path.join(rootDir, 'yarn.lock');
 
-  if (!fs.existsSync(pkgPath) || !fs.existsSync(lockPath)) {
+  if (!fs.existsSync(pkgPath)) {
     return;
   }
 
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  const lock: Lockfile = yarnlock.parse(fs.readFileSync(lockPath, 'utf8'))
-    .object;
+  const lock = getYarnLock(rootDir);
+  if (!lock) {
+    return;
+  }
 
   const allDeps: DependencyList = {
     ...(pkg.dependencies || {}),
@@ -37,7 +50,7 @@ export function getPackageListFromYarn(
     ...(pkg.optionalDependencies || {}),
   };
 
-  return [
+  return packagesToPackageList([
     ...rewriteLock(lock),
     {
       name: '.',
@@ -45,19 +58,13 @@ export function getPackageListFromYarn(
       requires: allDeps,
       dependencies: mapDependencies(allDeps, lock),
     },
-  ].reduce(
-    (a, x) => ({
-      ...a,
-      [x.name]: {
-        ...(a[x.name] || {}),
-        [x.version]: x,
-      },
-    }),
-    {} as PackageList,
-  );
+  ]);
 }
 
-function rewriteLock(lockfile: Lockfile): PackageInfo[] {
+/**
+ * Rewrite the given yarn lock file to the common structure.
+ */
+function rewriteLock(lockfile: YarnLockfile): PackageInfo[] {
   return Object.keys(lockfile).map(ref => {
     const node = lockfile[ref];
     const { name } = splitPackageRef(ref);
@@ -75,20 +82,24 @@ function rewriteLock(lockfile: Lockfile): PackageInfo[] {
   });
 }
 
+/**
+ * Map the list of given dependencies to their resolved versions.
+ */
 function mapDependencies(
   dependencies: DependencyList,
-  lockfile: Lockfile,
+  lockfile: YarnLockfile,
 ): DependencyList {
-  return Object.keys(dependencies)
-    .map(
-      (dep): [string, string] => [
-        dep,
-        lockfile[`${dep}@${dependencies[dep]}`].version,
-      ],
-    )
-    .reduce((a, [k, v]) => ({ ...a, [k]: v }), {});
+  return entries(dependencies)
+    .map(({ key, value }) => ({
+      key,
+      value: lockfile[`${key}@${value}`].version,
+    }))
+    .reduce(entriesToObjReducer, {});
 }
 
+/**
+ * Split a package@ver tuple into package and version.
+ */
 function splitPackageRef(ref: string): { name: string; version: string } {
   const i = ref.lastIndexOf('@');
   if (i < 0) {

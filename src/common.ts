@@ -1,3 +1,5 @@
+import { entries, entriesToObjReducer } from './util';
+
 /**
  * Describes a package and its dependencies.
  */
@@ -18,12 +20,10 @@ export interface DependencyList {
 }
 
 /**
- * Describes a complete list of packages.
+ * Describes a list of packages.
  */
 export interface PackageList {
-  [name: string]: {
-    [version: string]: PackageInfo;
-  };
+  [ref: string]: PackageInfo;
 }
 
 /**
@@ -31,30 +31,31 @@ export interface PackageList {
  * dependencies.
  */
 export interface SimplePackageList {
-  [name: string]: {
-    [dependency: string]: string;
-  };
+  [ref: string]: DependencyList;
+}
+
+/**
+ * Represents a yarn lock file.
+ */
+export interface YarnLockfile {
+  [name: string]: YarnLockfileEntry;
+}
+
+/**
+ * Represents an entry in a yarn lock file.
+ */
+export interface YarnLockfileEntry {
+  version: string;
+  resolved?: string;
+  integrity?: string;
+  dependencies?: DependencyList;
 }
 
 /**
  * Reduce the package list to just resolved packages and their dependencies.
  */
-export function simplify(deps: PackageList): SimplePackageList {
-  return Object.keys(deps)
-    .map(
-      (name): [string, DependencyList][] =>
-        Object.keys(deps[name]).map(
-          (version): [string, DependencyList] => [
-            name + '@' + version,
-            deps[name][version].dependencies || {},
-          ],
-        ),
-    )
-    .reduce(
-      (list, pkgs) => ({
-        ...list,
-        ...pkgs.reduce((sublist, [k, v]) => ({ ...sublist, [k]: v }), {}),
-      }),
-      {},
-    );
+export function simplify(packages: PackageList): SimplePackageList {
+  return entries(packages)
+    .map(({ key, value }) => ({ key, value: value.dependencies || {} }))
+    .reduce(entriesToObjReducer, {});
 }

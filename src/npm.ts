@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
-import { PackageList, PackageInfo, DependencyList } from './common';
+import { PackageInfo, DependencyList, PackageList } from './common';
+import { packagesToPackageList } from './util';
 
 interface LockfileEntry {
   version: string;
@@ -12,6 +13,10 @@ interface LockfileEntry {
   };
 }
 
+/**
+ * Get a package list in the common structure from the package-lock.json file,
+ * or undefined if not present.
+ */
 export function getPackageListFromNPM(
   rootDir?: string,
 ): PackageList | undefined {
@@ -27,18 +32,12 @@ export function getPackageListFromNPM(
   // make it easy to find the root package
   lock.version = '.';
 
-  return rewriteLock('.', lock).reduce(
-    (a, x) => ({
-      ...a,
-      [x.name]: {
-        ...(a[x.name] || {}),
-        [x.version]: x,
-      },
-    }),
-    {} as PackageList,
-  );
+  return packagesToPackageList(rewriteLock('.', lock));
 }
 
+/**
+ * Rewrite the given NPM lock file to the common structure.
+ */
 function rewriteLock(
   name: string,
   node: LockfileEntry,
@@ -65,6 +64,9 @@ function rewriteLock(
   ];
 }
 
+/**
+ * Change the version ranges to resolved versions.
+ */
 function rewriteDeps(
   deps: DependencyList | undefined,
   nodes: LockfileEntry[],
@@ -79,6 +81,9 @@ function rewriteDeps(
     .reduce((a, [k, v]) => ({ ...a, [k]: v }), {});
 }
 
+/**
+ * Find a resolved package by looking up the tree starting at the current node.
+ */
 function findDependencyVersion(
   packageName: string,
   nodes: LockfileEntry[],
