@@ -17,9 +17,9 @@ the packages.
 #### Definition
 
 ```typescript
-function getPackageList(rootDir: string): PackageList | undefined;
-function getPackageListFromNPM(rootDir: string): PackageList | undefined;
-function getPackageListFromYarn(rootDir: string): PackageList | undefined;
+function getPackageList(rootDir?: string): PackageList | undefined;
+function getPackageListFromNPM(rootDir?: string): PackageList | undefined;
+function getPackageListFromYarn(rootDir?: string): PackageList | undefined;
 ```
 
 #### Example
@@ -28,7 +28,7 @@ function getPackageListFromYarn(rootDir: string): PackageList | undefined;
 const packageList = require('super-package-list');
 
 // get info for the package in the current working dir
-const packages = packageList.getPackageList('.');
+const packages = packageList.getPackageList();
 
 console.log(JSON.stringify(packages, null, 2));
 ```
@@ -37,17 +37,15 @@ This will output a structure like the following:
 
 ```json
 {
-  "strip-ansi": {
-    "3.0.1": {
-      "name": "strip-ansi",
-      "version": "3.0.1",
-      "resolved": "http://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz#6a385fb8853d952d5ff05d0e8aaf94278dc63dcf",
-      "requires": {
-        "ansi-regex": "^2.0.0"
-      },
-      "dependencies": {
-        "ansi-regex": "2.1.1"
-      }
+  "strip-ansi@3.0.1": {
+    "name": "strip-ansi",
+    "version": "3.0.1",
+    "resolved": "http://registry.npmjs.org/strip-ansi/-/strip-ansi-3.0.1.tgz#6a385fb8853d952d5ff05d0e8aaf94278dc63dcf",
+    "requires": {
+      "ansi-regex": "^2.0.0"
+    },
+    "dependencies": {
+      "ansi-regex": "2.1.1"
     }
   }
 }
@@ -66,7 +64,7 @@ function simplify(deps: PackageList): SimplePackageList;
 #### Example
 
 ```javascript
-const packages = packageList.getPackageList('.');
+const packages = packageList.getPackageList();
 const simple = packageList.simplify(packages);
 console.log(JSON.stringify(simple, null, 2));
 ```
