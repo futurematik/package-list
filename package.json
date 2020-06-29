@@ -1,6 +1,6 @@
 {
   "name": "@fmtk/package-list",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Returns information about the packages installed in a project",
   "main": "lib/index.js",
   "scripts": {
