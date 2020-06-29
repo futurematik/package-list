@@ -25,7 +25,9 @@ if (options.includes('json')) {
 
   if (!options.includes('--with-version')) {
     packageList = [
-      ...new Set(packageList.map((x) => x.slice(0, x.indexOf('@')))).values(),
+      ...new Set(
+        packageList.map((x) => x.slice(0, x.lastIndexOf('@'))),
+      ).values(),
     ];
   }
 
