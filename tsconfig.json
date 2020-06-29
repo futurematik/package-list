@@ -1,16 +1,20 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es2015",
-    "moduleResolution": "node",
-    "jsx": "react",
-    "noUnusedLocals": true,
-    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "types": ["node"],
-    "sourceMap": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
     "outDir": "lib",
-    "declaration": true
+    "pretty": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2015",
+    "types": ["node"]
   },
   "exclude": ["node_modules/", "lib/"]
 }

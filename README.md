@@ -25,7 +25,7 @@ function getPackageListFromYarn(rootDir?: string): PackageList | undefined;
 #### Example
 
 ```javascript
-const packageList = require('super-package-list');
+const packageList = require('@fmtk/package-list');
 
 // get info for the package in the current working dir
 const packages = packageList.getPackageList();
@@ -73,7 +73,7 @@ This will output a structure like the following:
 
 ```json
 {
-  "super-package-list@1.0.0": {
+  "@fmtk/package-list@1.0.0": {
     "@types/node": "10.12.0",
     "tslint": "5.11.0",
     "typescript": "3.1.3",

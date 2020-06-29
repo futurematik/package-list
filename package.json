@@ -13,8 +13,13 @@
     "preversion": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "pkglist": "cli.js"
+  },
   "files": [
-    "lib/"
+    "lib/",
+    "src/",
+    "cli.js"
   ],
   "repository": {
     "type": "git",
